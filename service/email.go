@@ -1,9 +1,10 @@
-package email
+package service
 
 import (
 	"fmt"
-	"github.com/jordan-wright/email"
 	"net/smtp"
+
+	"github.com/jordan-wright/email"
 )
 
 const (
@@ -22,21 +23,32 @@ type Sender interface {
 	) error
 }
 
-type GmailSender struct {
+type EmailSender struct {
 	name              string
 	fromEmailAddress  string
 	fromEmailPassword string
 }
 
-func NewGmailSender(name string, fromEmailAddress string, fromEmailPassword string) Sender {
-	return &GmailSender{
+type EmailRequest struct {
+	Subject     string   `json:"subject"`
+	Content     string   `json:"content"`
+	To          []string `json:"to"`
+	Cc          []string `json:"cc"`
+	Bcc         []string `json:"bcc"`
+	AttachFiles []string `json:"attachFiles"`
+}
+
+//================================================
+
+func NewEmailSender(name string, fromEmailAddress string, fromEmailPassword string) Sender {
+	return &EmailSender{
 		name:              name,
 		fromEmailAddress:  fromEmailAddress,
 		fromEmailPassword: fromEmailPassword,
 	}
 }
 
-func (sender *GmailSender) SendEmail(
+func (sender *EmailSender) SendEmail(
 	subject string,
 	content string,
 	to []string,
