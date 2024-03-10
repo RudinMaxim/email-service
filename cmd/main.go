@@ -4,8 +4,14 @@ import (
 	"github.com/RudinMaxim/email-service.git/router"
 )
 
-func main() {
+// @title API сервиса Email
+// @version 1.0
+// @description Это API сервер для сервиса email.
 
+// @host localhost:8080
+// @BasePath /
+
+func main() {
 	err := router.InitRouter()
 	if err != nil {
 		return

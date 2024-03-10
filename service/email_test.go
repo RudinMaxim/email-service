@@ -1,6 +1,7 @@
 package service
 
 import (
+	"os"
 	"testing"
 )
 
@@ -9,20 +10,12 @@ func TestSendEmail(t *testing.T) {
 		t.Skip()
 	}
 
-	//errLoad := godotenv.Load()
-	//if errLoad != nil {
-	//	log.Fatal("Error loading .env file")
-	//}
-	//sender := NewGmailSender(
-	//	os.Getenv("EMAIL_SENDER_NAME"),
-	//	os.Getenv("EMAIL_SENDER_ADDRESS"),
-	//	os.Getenv("EMAIL_SENDER_PASSWORD"),
-	//)
-
 	sender := NewEmailSender(
-		"maxrudin",
-		"maxrudin2004@gmail.com",
-		"gdrv xhcs oapk dusm",
+		os.Getenv("EMAIL_SENDER_NAME"),
+		os.Getenv("EMAIL_SENDER_ADDRESS"),
+		os.Getenv("EMAIL_SENDER_PASSWORD"),
+		os.Getenv("SMTP_AUTH_ADDRESS"),
+		os.Getenv("SMTP_SERVER_ADDRESS"),
 	)
 
 	err := sender.SendEmail(

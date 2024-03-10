@@ -3,9 +3,14 @@ package router
 import (
 	"log"
 
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"github.com/RudinMaxim/email-service.git/service"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
+	_ "github.com/RudinMaxim/email-service.git/docs"
 )
 
 var r *gin.Engine
@@ -25,6 +30,7 @@ func InitRouter() error {
 	}
 	r.Use(CORSMiddleware())
 
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/send-email", service.SendEmailHandler)
 
 	return nil

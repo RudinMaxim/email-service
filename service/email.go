@@ -7,11 +7,6 @@ import (
 	"github.com/jordan-wright/email"
 )
 
-const (
-	smtpAuthAddress   = "smtp.gmail.com"
-	smtpServerAddress = "smtp.gmail.com:587"
-)
-
 type Sender interface {
 	SendEmail(
 		subject string,
@@ -27,6 +22,8 @@ type EmailSender struct {
 	name              string
 	fromEmailAddress  string
 	fromEmailPassword string
+	smtpAuthAddress   string
+	smtpServerAddress string
 }
 
 type EmailRequest struct {
@@ -38,13 +35,15 @@ type EmailRequest struct {
 	AttachFiles []string `json:"attachFiles"`
 }
 
-//================================================
+//==========================================================================
 
-func NewEmailSender(name string, fromEmailAddress string, fromEmailPassword string) Sender {
+func NewEmailSender(name, fromEmailAddress, fromEmailPassword, smtpAuthAddress, smtpServerAddress string) Sender {
 	return &EmailSender{
 		name:              name,
 		fromEmailAddress:  fromEmailAddress,
 		fromEmailPassword: fromEmailPassword,
+		smtpAuthAddress:   smtpAuthAddress,
+		smtpServerAddress: smtpServerAddress,
 	}
 }
 
@@ -71,6 +70,6 @@ func (sender *EmailSender) SendEmail(
 		}
 	}
 
-	smtpAuth := smtp.PlainAuth("", sender.fromEmailAddress, sender.fromEmailPassword, smtpAuthAddress)
-	return e.Send(smtpServerAddress, smtpAuth)
+	smtpAuth := smtp.PlainAuth("", sender.fromEmailAddress, sender.fromEmailPassword, sender.smtpAuthAddress)
+	return e.Send(sender.smtpServerAddress, smtpAuth)
 }

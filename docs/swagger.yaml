@@ -1,0 +1,9 @@
+basePath: /
+host: localhost:8587
+info:
+  contact: {}
+  description: Это API сервер для сервиса email.
+  title: API сервиса Email
+  version: "1.0"
+paths: {}
+swagger: "2.0"
