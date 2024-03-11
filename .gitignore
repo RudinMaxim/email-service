@@ -16,6 +16,7 @@
 
 *.env
 
+docker-data
 .idea
 
 # Dependency directories (remove the comment below to include it)
