@@ -12,9 +12,10 @@ services:
     networks:
       - mail_network
   mailserver:
-    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    image: docker.io/mailserver/docker-mailserver:latest
     container_name: mailserver
     hostname: mail-server
+    domainname: domain.com
     ports:
       - '25:25'
       - '465:465'
@@ -24,11 +25,9 @@ services:
       - ./docker-data/dms/mail-state/:/var/mail-state/
       - ./docker-data/dms/mail-logs/:/var/log/mail/
       - ./docker-data/dms/config/:/tmp/docker-mailserver/
-      # - ./docker-data/nginx-proxy/certs/:/usr/local/psa/var/modules/letsencrypt/
       - /etc/localtime:/etc/localtime:ro
     environment:
       - ENABLE_FAIL2BAN=1
-      # - SSL_TYPE=letsencrypt
       - PERMIT_DOCKER=network
       - ONE_DIR=1
       - ENABLE_POSTGREY=0
