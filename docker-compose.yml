@@ -1,46 +1,51 @@
 version: '1.0'
 
 services:
-  mailagent:
-    container_name: mailagent
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '8080:8080'
-    restart: always
-    networks:
-      - mail_network
-  mailserver:
-    image: docker.io/mailserver/docker-mailserver:latest
-    container_name: mailserver
-    hostname: mail-server
-    domainname: domain.com
-    ports:
-      - '25:25'
-      - '465:465'
-      - '587:587'
-    volumes:
-      - ./docker-data/dms/mail-data/:/var/mail/
-      - ./docker-data/dms/mail-state/:/var/mail-state/
-      - ./docker-data/dms/mail-logs/:/var/log/mail/
-      - ./docker-data/dms/config/:/tmp/docker-mailserver/
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      - ENABLE_FAIL2BAN=1
-      - PERMIT_DOCKER=network
-      - ONE_DIR=1
-      - ENABLE_POSTGREY=0
-      - ENABLE_CLAMAV=0
-      - ENABLE_SPAMASSASSIN=0
-      - SPOOF_PROTECTION=0
-      - LOG_LEVEL=debug
-    restart: always
-    cap_add:
-      - NET_ADMIN
-      - SYS_PTRACE
-    networks:
-      - mail_network
+  # mailagent:
+  #   container_name: mailagent
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - '8080:8080'
+  #   restart: always
+  #   environment:
+  #     - EMAIL_SENDER_NAME=samovartime
+  #     - EMAIL_SENDER_ADDRESS=user@domain.com
+  #     - EMAIL_SENDER_PASSWORD=P@ssw0Rd
+  #     - SMTP_AUTH_ADDRESS=mailserver
+  #     - SMTP_SERVER_ADDRESS=mailserver:587
+  #   networks:
+  #     - mail_network
+  services:
+    mailserver:
+      image: ghcr.io/docker-mailserver/docker-mailserver:latest
+      container_name: mailserver
+      # Provide the FQDN of your mail server here (Your DNS MX record should point to this value)
+      hostname: mail.example.com
+      ports:
+        - '25:25'
+        - '587:587'
+        - '465:465'
+      volumes:
+        - ./docker-data/dms/mail-data/:/var/mail/
+        - ./docker-data/dms/mail-state/:/var/mail-state/
+        - ./docker-data/dms/mail-logs/:/var/log/mail/
+        - ./docker-data/dms/config/:/tmp/docker-mailserver/
+        - /etc/localtime:/etc/localtime:ro
+      environment:
+        - ENABLE_FAIL2BAN=1
+        # Using letsencrypt for SSL/TLS certificates:
+        - SSL_TYPE=letsencrypt
+        # Allow sending emails from other docker containers:
+        # Beware creating an Open Relay: https://docker-mailserver.github.io/docker-mailserver/latest/config/environment/#permit_docker
+        - PERMIT_DOCKER=network
+        # You may want to enable this: https://docker-mailserver.github.io/docker-mailserver/latest/config/environment/#spoof_protection
+        # See step 6 below, which demonstrates setup with enabled/disabled SPOOF_PROTECTION:
+        - SPOOF_PROTECTION=0
+      cap_add:
+        - NET_ADMIN # For Fail2Ban to work
+      restart: always
 
 networks:
   mail_network:

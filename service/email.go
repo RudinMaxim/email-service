@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"net/smtp"
 
 	"github.com/jordan-wright/email"
@@ -56,6 +57,7 @@ func (sender *EmailSender) SendEmail(
 	attachFiles []string,
 ) error {
 	e := email.NewEmail()
+
 	e.From = fmt.Sprintf("%s <%s>", sender.name, sender.fromEmailAddress)
 	e.Subject = subject
 	e.HTML = []byte(content)
@@ -70,6 +72,14 @@ func (sender *EmailSender) SendEmail(
 		}
 	}
 
+	log.Println(e)
+
 	smtpAuth := smtp.PlainAuth("", sender.fromEmailAddress, sender.fromEmailPassword, sender.smtpAuthAddress)
-	return e.Send(sender.smtpServerAddress, smtpAuth)
+
+	err := e.Send(sender.smtpServerAddress, smtpAuth)
+	if err != nil {
+		return fmt.Errorf("send email failed: %w", err)
+	}
+
+	return nil
 }

@@ -17,7 +17,6 @@ import (
 // @Failure 400 {object} gin.H
 // @Failure 500 {object} gin.H
 // @Router /send-email [post]
-
 func SendEmailHandler(c *gin.Context) {
 	var req EmailRequest
 
